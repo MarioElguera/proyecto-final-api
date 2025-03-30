@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     getCommentsByArticle,
     createComment,
+    updateComment,
     deleteComment
 } = require('../controllers/commentController');
 const auth = require('../middlewares/authMiddleware');
