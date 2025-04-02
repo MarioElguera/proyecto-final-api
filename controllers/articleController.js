@@ -1,7 +1,7 @@
 const Article = require('../models/Article');
 const Comment = require('../models/Comment');
 
-
+// trae el articulo con todos los comentarios que tiene
 const getFullArticleById = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id).populate('author', 'username');
@@ -22,7 +22,7 @@ const getFullArticleById = async (req, res, next) => {
     }
 };
 
-// GET /api/articles?category=musica
+// trae todos los articulos y se puede filtrar por categoria
 const getAllArticles = async (req, res, next) => {
     try {
         const { category } = req.query;
@@ -39,7 +39,7 @@ const getAllArticles = async (req, res, next) => {
     }
 };
 
-// Get one article
+// detalle article
 const getArticleById = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id).populate('author', 'username');
@@ -54,7 +54,7 @@ const getArticleById = async (req, res, next) => {
     }
 };
 
-// Create article
+// crear articulo
 const createArticle = async (req, res, next) => {
     try {
         const article = new Article({
@@ -70,7 +70,7 @@ const createArticle = async (req, res, next) => {
     }
 };
 
-// Update article
+// actualizar articulo
 const updateArticle = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id);
@@ -80,14 +80,14 @@ const updateArticle = async (req, res, next) => {
             return next(err);
         }
 
-        // Solo el autor o un admin puede editar
+        // solo el autor o un admin puede editar
         if (req.user.role !== 'admin' && article.author.toString() !== req.user.id) {
             const err = new Error('You are not authorized to edit this article');
             err.status = 403;
             return next(err);
         }
 
-        // Actualizar campos permitidos
+        // actualizar los campos permitidos
         article.title = req.body.title || article.title;
         article.content = req.body.content || article.content;
         article.category = req.body.category || article.category;
@@ -96,12 +96,13 @@ const updateArticle = async (req, res, next) => {
 
         const updated = await article.save();
         res.json(updated);
+
     } catch (error) {
         next(error);
     }
 };
 
-// Delete article
+// eliminar articulo
 const deleteArticle = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id);
