@@ -56,19 +56,25 @@ const getArticleById = async (req, res, next) => {
 
 // crear articulo
 const createArticle = async (req, res, next) => {
+    console.log("createArticle");
+
     try {
         const article = new Article({
             title: req.body.title,
             content: req.body.content,
+            category: req.body.category, // ✅ nuevo campo requerido
+            image: req.body.image || '', // ✅ base64 opcional
             author: req.user.id
         });
 
         const saved = await article.save();
         res.status(201).json(saved);
+
     } catch (error) {
         next(error);
     }
 };
+
 
 // actualizar articulo
 const updateArticle = async (req, res, next) => {

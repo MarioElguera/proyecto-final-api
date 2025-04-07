@@ -38,4 +38,5 @@ app.use(errorHandler);
 connectDB();
 
 const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));

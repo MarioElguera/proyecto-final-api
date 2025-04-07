@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // Register user
 const registerUser = async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, role } = req.body;
 
         if (!username || !password) {
             const err = new Error('Username and password are required');
@@ -25,7 +25,7 @@ const registerUser = async (req, res, next) => {
         const user = new User({
             username,
             password: hashedPassword,
-            role: 'user' // default role
+            role: role || 'user'
         });
 
         await user.save();
@@ -67,7 +67,8 @@ const loginUser = async (req, res, next) => {
             { expiresIn: '5h' }
         );
 
-        res.status(200).json({ token });
+        res.status(200).json({ token, username: user.username });
+
     } catch (error) {
         next(error);
     }

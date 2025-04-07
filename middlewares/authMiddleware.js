@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const secret = 'your_jwt_secret';
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header('x-auth-token');
+    const token = req.header('Authorization');
     if (!token) return res.status(401).send('Acceso Denegado');
 
     try {
@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
         next();
 
     } catch (error) {
-        res.status(400).send('Token inválido');
+        res.status(400).send('Token inválido 2');
     }
 };
 
