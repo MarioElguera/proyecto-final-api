@@ -1,9 +1,9 @@
 const Comment = require('../models/Comment');
 
-// Get comments
-const getComments = async (req, res, next) => {
+// Obtener TODOS los comentarios
+const getAllComments = async (req, res, next) => {
     try {
-        const comments = await Comment.find({ article: req.params.articleId });
+        const comments = await Comment.find({}).populate('author', 'username');
         res.json(comments);
     } catch (error) {
         next(error);
@@ -86,7 +86,7 @@ const deleteComment = async (req, res, next) => {
 };
 
 module.exports = {
-    getComments,
+    getAllComments,
     getCommentsByArticle,
     createComment,
     updateComment,
