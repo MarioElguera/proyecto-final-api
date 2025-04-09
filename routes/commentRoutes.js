@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+    getComments,
     getCommentsByArticle,
     createComment,
     updateComment,
@@ -9,6 +10,7 @@ const {
 const auth = require('../middlewares/authMiddleware');
 
 // Rutas públicas
+router.get('/', getComments);
 router.get('/:articleId', getCommentsByArticle);
 
 // Rutas privadas

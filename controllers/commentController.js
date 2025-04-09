@@ -1,5 +1,15 @@
 const Comment = require('../models/Comment');
 
+// Get comments
+const getComments = async (req, res, next) => {
+    try {
+        const comments = await Comment.find({ article: req.params.articleId });
+        res.json(comments);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // Get comments of one article
 const getCommentsByArticle = async (req, res, next) => {
     try {
@@ -76,6 +86,7 @@ const deleteComment = async (req, res, next) => {
 };
 
 module.exports = {
+    getComments,
     getCommentsByArticle,
     createComment,
     updateComment,
