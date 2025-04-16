@@ -1,12 +1,12 @@
 
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
 const authRoutes = require('./routes/authRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 const { errorHandler } = require('./middlewares/errorMiddleware');
 const connectDB = require('./config/db');
@@ -32,6 +32,8 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/articles', articleRoutes);
 app.use('/comments', commentRoutes);
+app.use('/events', eventRoutes);
+
 app.use(errorHandler);
 
 // Conexión a la base de datos
