@@ -2,20 +2,20 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Register user
+// Registrar usuario
 const registerUser = async (req, res, next) => {
     try {
         const { username, password, role } = req.body;
 
         if (!username || !password) {
-            const err = new Error('Username and password are required');
+            const err = new Error('El nombre de usuario y la contraseña son obligatorios');
             err.status = 400;
             return next(err);
         }
 
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            const err = new Error('Username is already in use');
+            const err = new Error('El nombre de usuario ya está en uso');
             err.status = 409;
             return next(err);
         }
@@ -25,38 +25,38 @@ const registerUser = async (req, res, next) => {
         const user = new User({
             username,
             password: hashedPassword,
-            role: role || 'user'
+            role: role || 'user',
         });
 
         await user.save();
 
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ message: 'Usuario registrado exitosamente' });
     } catch (error) {
         next(error);
     }
 };
 
-// Login user
+// Iniciar sesión
 const loginUser = async (req, res, next) => {
     try {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            const err = new Error('Username and password are required');
+            const err = new Error('El nombre de usuario y la contraseña son obligatorios');
             err.status = 400;
             return next(err);
         }
 
         const user = await User.findOne({ username });
         if (!user) {
-            const err = new Error('Invalid credentials');
+            const err = new Error('Credenciales inválidas');
             err.status = 401;
             return next(err);
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            const err = new Error('Invalid credentials');
+            const err = new Error('Credenciales inválidas');
             err.status = 401;
             return next(err);
         }
@@ -68,7 +68,6 @@ const loginUser = async (req, res, next) => {
         );
 
         res.status(200).json({ token, username: user.username });
-
     } catch (error) {
         next(error);
     }

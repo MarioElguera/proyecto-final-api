@@ -11,18 +11,26 @@ const eventSchema = new mongoose.Schema({
         required: true
     },
     image: {
-        type: String, // Se guardará en formato base64
+        type: String,
         default: ''
     },
     link: {
-        type: String, // URL a la página oficial del evento
+        type: String,
+        required: true
+    },
+    eventDate: {
+        type: Date,
         required: true
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
 }, {
     timestamps: true,
     collection: 'event'

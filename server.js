@@ -9,7 +9,7 @@ const commentRoutes = require('./routes/commentRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 
 const { errorHandler } = require('./middlewares/errorMiddleware');
-const connectDB = require('./config/db');
+const connectDB = require('./config/connectDB');
 
 dotenv.config();
 const app = express();
@@ -21,7 +21,7 @@ app.use(
     cors({
         origin: process.env.FRONTEND_URL,
         methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"]
+        allowedHeaders: ["Content-Type", "Authorization"]
     })
 );
 
