@@ -2,30 +2,39 @@ const mongoose = require('mongoose');
 const Article = require('../models/Article');
 const Comment = require('../models/Comment');
 
-// Trae un artículo con todos los comentarios relacionados
+/**
+ * Manejador de errores personalizados
+ */
+const createError = (message, status = 500) => {
+    const err = new Error(message);
+    err.status = status;
+    return err;
+};
+
+/**
+ * GET /articles/full/:id
+ * Trae un artículo con todos los comentarios relacionados
+ */
 const getFullArticleById = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id).populate('author', 'username');
-        if (!article) {
-            const err = new Error('Artículo no encontrado');
-            err.status = 404;
-            return next(err);
-        }
+        if (!article) return next(createError('Artículo no encontrado', 404));
 
         const comments = await Comment.find({ article: req.params.id }).populate('author', 'username');
-
         res.json({ article, comments });
     } catch (error) {
         next(error);
     }
 };
 
-// Trae todos los artículos, con filtro opcional por categoría
+/**
+ * GET /articles
+ * Trae todos los artículos, con filtro opcional por categoría
+ */
 const getAllArticles = async (req, res, next) => {
     try {
         const { category } = req.query;
         const filter = category ? { category } : {};
-
         const articles = await Article.find(filter).populate('author', 'username');
         res.json(articles);
     } catch (error) {
@@ -33,22 +42,24 @@ const getAllArticles = async (req, res, next) => {
     }
 };
 
-// Trae el detalle de un artículo por ID
+/**
+ * GET /articles/:id
+ * Trae un artículo por su ID
+ */
 const getArticleById = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id).populate('author', 'username');
-        if (!article) {
-            const err = new Error('Artículo no encontrado');
-            err.status = 404;
-            return next(err);
-        }
+        if (!article) return next(createError('Artículo no encontrado', 404));
         res.json(article);
     } catch (error) {
         next(error);
     }
 };
 
-// Crea un nuevo artículo
+/**
+ * POST /articles
+ * Crea un nuevo artículo
+ */
 const createArticle = async (req, res, next) => {
     try {
         const article = new Article({
@@ -62,25 +73,21 @@ const createArticle = async (req, res, next) => {
         const saved = await article.save();
         res.status(201).json(saved);
     } catch (error) {
-        next(error);
+        next(createError('Error al crear el artículo. Revisa los campos ingresados.', 400));
     }
 };
 
-// Actualiza un artículo existente
+/**
+ * PUT /articles/:id
+ * Actualiza un artículo existente
+ */
 const updateArticle = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id);
-        if (!article) {
-            const err = new Error('Artículo no encontrado');
-            err.status = 404;
-            return next(err);
-        }
+        if (!article) return next(createError('Artículo no encontrado', 404));
 
-        if (req.user.role !== 'admin' && article.author.toString() !== req.user.id) {
-            const err = new Error('No estás autorizado para editar este artículo');
-            err.status = 403;
-            return next(err);
-        }
+        const notAuthorized = req.user.role !== 'admin' && article.author.toString() !== req.user.id;
+        if (notAuthorized) return next(createError('No estás autorizado para editar este artículo', 403));
 
         article.title = req.body.title || article.title;
         article.content = req.body.content || article.content;
@@ -91,11 +98,14 @@ const updateArticle = async (req, res, next) => {
         const updated = await article.save();
         res.json(updated);
     } catch (error) {
-        next(error);
+        next(createError('Error al actualizar el artículo.', 400));
     }
 };
 
-// Elimina un artículo y sus comentarios relacionados usando Transacción
+/**
+ * DELETE /articles/:id
+ * Elimina un artículo y sus comentarios relacionados (transacción)
+ */
 const deleteArticle = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -103,19 +113,16 @@ const deleteArticle = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.id).session(session);
         if (!article) {
-            const err = new Error('Artículo no encontrado');
-            err.status = 404;
             await session.abortTransaction();
             session.endSession();
-            return next(err);
+            return next(createError('Artículo no encontrado', 404));
         }
 
-        if (req.user.role !== 'admin' && article.author.toString() !== req.user.id) {
-            const err = new Error('No estás autorizado para eliminar este artículo');
-            err.status = 403;
+        const notAuthorized = req.user.role !== 'admin' && article.author.toString() !== req.user.id;
+        if (notAuthorized) {
             await session.abortTransaction();
             session.endSession();
-            return next(err);
+            return next(createError('No estás autorizado para eliminar este artículo', 403));
         }
 
         await Comment.deleteMany({ article: article._id }).session(session);
@@ -128,11 +135,14 @@ const deleteArticle = async (req, res, next) => {
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
-        next(error);
+        next(createError('Error al eliminar el artículo.', 500));
     }
 };
 
-// Trae lista de categorías disponibles
+/**
+ * GET /articles/categories/list
+ * Retorna la lista de categorías disponibles
+ */
 const getCategories = (req, res) => {
     const categories = ['futbol', 'viajes', 'musica', 'peliculas'];
     res.json(categories);

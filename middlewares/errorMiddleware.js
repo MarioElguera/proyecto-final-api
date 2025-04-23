@@ -1,12 +1,16 @@
 const errorHandler = (err, req, res, next) => {
-    console.error('[ERROR]', err.message);
-
     const statusCode = err.status || 500;
+    const message = err.message || 'Error interno del servidor';
+
     res.status(statusCode).json({
         success: false,
-        message: process.env.NODE_ENV === 'production'
-            ? 'Ocurrió un error inesperado. Intenta nuevamente.'
-            : err.message
+        statusCode,
+        message,
+        // Solo mostrar detalles extra en desarrollo
+        ...(process.env.NODE_ENV === 'development' && {
+            stack: err.stack,
+            error: err
+        })
     });
 };
 
