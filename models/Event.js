@@ -13,7 +13,7 @@ const eventSchema = new mongoose.Schema(
             type: String,
             required: [true, 'La descripción del evento es obligatoria'],
             minlength: [10, 'La descripción debe tener al menos 10 caracteres'],
-            maxlength: [1000, 'La descripción no puede superar los 1000 caracteres']
+            maxlength: [400, 'La descripción no puede superar los 1000 caracteres']
         },
         image: {
             type: String,
