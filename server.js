@@ -41,6 +41,6 @@ app.use('/events', eventRoutes);
 
 // Middleware de manejo de errores
 app.use(errorHandler);
-app.listen(5000, () => console.log(`Servidor corriendo en puerto 5000`));
+// app.listen(5000, () => console.log(`Servidor corriendo en puerto 5000`));
 // Exportar la app para que Vercel pueda usarla
-// module.exports = app;
+module.exports = app;
