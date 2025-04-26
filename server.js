@@ -1,4 +1,3 @@
-// src/server.js
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -41,6 +40,4 @@ app.use('/events', eventRoutes);
 
 // Middleware de manejo de errores
 app.use(errorHandler);
-// app.listen(5000, () => console.log(`Servidor corriendo en puerto 5000`));
-// Exportar la app para que Vercel pueda usarla
 module.exports = app;

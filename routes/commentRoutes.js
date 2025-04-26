@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+
+// Controladores de 'comments'
 const {
     getAllComments,
     getCommentsByArticle,
@@ -13,7 +15,7 @@ const auth = require('../middlewares/authMiddleware');
 router.get('/', getAllComments);
 router.get('/:articleId', getCommentsByArticle);
 
-// Rutas privadas
+// Rutas privadas (requieren login)
 router.put('/:id', auth, updateComment);
 router.post('/:articleId', auth, createComment);
 router.delete('/:id', auth, deleteComment);
