@@ -31,7 +31,7 @@ app.use(cors({
 
 // Rutas
 app.get('/', (req, res) => {
-    res.send('¡Bienvenido a la API! 🌟');
+    res.send('¡Bienvenido a la API!');
 });
 app.use('/auth', authRoutes);
 app.use('/articles', articleRoutes);
